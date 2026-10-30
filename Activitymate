@@ -1,0 +1,679 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<meta name="theme-color" content="#6558d9">
+
+<title>ActivityMate</title>
+
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+body{background:#f6f6fc;color:#24233c;min-height:100vh}
+
+.app{max-width:480px;margin:auto;min-height:100vh;background:#f9f9ff;padding-bottom:90px}
+
+header{padding:28px 22px 20px;background:#6558d9;color:white;border-radius:0 0 28px 28px}
+
+.top{display:flex;justify-content:space-between;align-items:center}
+
+.logo{font-size:23px;font-weight:800}
+
+.avatar{background:#ffffff30;padding:11px;border-radius:50%}
+
+header p{margin-top:20px;color:#e8e5ff;font-size:14px}
+
+header h2{font-size:25px;margin-top:6px}
+
+.content{padding:22px}
+
+.section{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+
+.section h3{font-size:18px}
+
+.small{color:#777;font-size:12px}
+
+.stats{display:flex;gap:12px;margin:20px 0}
+
+.stat{background:white;padding:17px 12px;border-radius:17px;flex:1;box-shadow:0 3px 15px #22222208}
+
+.stat strong{font-size:23px;color:#6558d9;display:block}
+
+.stat span{font-size:11px;color:#777}
+
+.card{background:white;padding:19px;border-radius:19px;margin-bottom:14px;box-shadow:0 3px 15px #22222208}
+
+.activity{display:flex;align-items:center;gap:13px}
+
+.activity-icon{background:#f0efff;padding:13px;border-radius:13px;font-size:22px}
+
+.activity-info{flex:1}
+
+.activity-info strong{font-size:15px}
+
+.activity-info p{font-size:12px;color:#888;margin-top:5px}
+
+.pill{font-size:11px;background:#eeedff;color:#6558d9;padding:7px 10px;border-radius:20px}
+
+.primary{background:#6558d9;color:white;border:0;border-radius:13px;padding:16px;width:100%;font-size:15px;font-weight:700;margin-top:10px}
+
+.secondary{background:#f0efff;color:#6558d9;border:0;border-radius:12px;padding:13px;font-weight:700}
+
+.danger{background:#fff0f0;color:#d44b4b;border:0;border-radius:12px;padding:13px;font-weight:700}
+
+label{font-size:13px;font-weight:650;display:block;margin:17px 0 8px}
+
+input,select{width:100%;padding:14px;border:1px solid #e6e5ef;border-radius:12px;background:#fff;font-size:15px;color:#24233c;outline:none}
+
+.duration{display:flex;gap:12px}
+
+.duration div{flex:1}
+
+.timer-card{text-align:center;padding:30px 15px;background:#f0efff;border-radius:20px;margin:20px 0}
+
+.timer{font-size:55px;font-weight:800;color:#6558d9;margin:17px 0;font-variant-numeric:tabular-nums}
+
+.timer-actions{display:flex;gap:10px}
+
+.timer-actions button{flex:1}
+
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:white;display:flex;justify-content:space-around;padding:13px 5px calc(13px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px #2222220c}
+
+.nav button{background:none;border:0;color:#999;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:5px}
+
+.nav button span{font-size:21px}
+
+.nav button.active{color:#6558d9;font-weight:bold}
+
+.page{display:none}
+
+.page.active{display:block}
+
+.empty{text-align:center;padding:35px 10px;color:#999;font-size:13px}
+
+.hidden{display:none!important}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+  <div class="top">
+
+    <div class="logo">✦ ActivityMate</div>
+
+    <div class="avatar">👤</div>
+
+  </div>
+
+  <p id="greeting">YOUR PERSONAL ACTIVITY PLANNER</p>
+
+  <h2>Make time for what matters.</h2>
+
+</header>
+
+<main class="content">
+
+<!-- HOME -->
+
+<section class="page active" id="home">
+
+  <div class="stats">
+
+    <div class="stat"><strong id="total">0</strong><span>Activities</span></div>
+
+    <div class="stat"><strong id="completed">0</strong><span>Completed</span></div>
+
+    <div class="stat"><strong id="ongoing">0</strong><span>Ongoing</span></div>
+
+  </div>
+
+  <div class="section">
+
+    <h3>My Activities</h3>
+
+    <span class="small">Your schedule</span>
+
+  </div>
+
+  <div id="activityList">
+
+    <div class="card empty">No activities yet. Add your first activity!</div>
+
+  </div>
+
+  <button class="primary" onclick="showPage('add')">＋ Add New Activity</button>
+
+</section>
+
+<!-- ADD ACTIVITY -->
+
+<section class="page" id="add">
+
+  <div class="section"><h3>Create Activity</h3></div>
+
+  <div class="card">
+
+    <label>Activity name</label>
+
+    <input id="name" type="text" placeholder="e.g. Reading, Cooking, Studying">
+
+    <label>Category</label>
+
+    <select id="category">
+
+      <option>Education</option>
+
+      <option>Personal</option>
+
+      <option>Exercise</option>
+
+      <option>Work</option>
+
+      <option>Entertainment</option>
+
+      <option>Other</option>
+
+    </select>
+
+    <label>Activity description</label>
+
+    <input id="description" type="text" placeholder="What do you want to do?">
+
+    <label>Set duration</label>
+
+    <div class="duration">
+
+      <div>
+
+        <select id="hours">
+
+          <option value="0">0 hours</option>
+
+          <option value="1">1 hour</option>
+
+          <option value="2">2 hours</option>
+
+          <option value="3">3 hours</option>
+
+          <option value="4">4 hours</option>
+
+          <option value="5">5 hours</option>
+
+          <option value="6">6 hours</option>
+
+          <option value="8">8 hours</option>
+
+          <option value="12">12 hours</option>
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <select id="minutes">
+
+          <option value="0">0 minutes</option>
+
+          <option value="5">5 minutes</option>
+
+          <option value="10">10 minutes</option>
+
+          <option value="15">15 minutes</option>
+
+          <option value="20">20 minutes</option>
+
+          <option value="25">25 minutes</option>
+
+          <option value="30">30 minutes</option>
+
+          <option value="45">45 minutes</option>
+
+          <option value="50">50 minutes</option>
+
+          <option value="55">55 minutes</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <button class="primary" onclick="addActivity()">Save Activity</button>
+
+    <button class="secondary" style="width:100%;margin-top:10px" onclick="showPage('home')">Cancel</button>
+
+  </div>
+
+</section>
+
+<!-- TIMER -->
+
+<section class="page" id="timerPage">
+
+  <div class="section"><h3>Activity Timer</h3></div>
+
+  <div class="card">
+
+    <div style="text-align:center;color:#888;font-size:12px">CURRENT ACTIVITY</div>
+
+    <h2 id="timerName" style="text-align:center;margin-top:10px">No activity selected</h2>
+
+    <div class="timer-card">
+
+      <div style="color:#777;font-size:13px">TIME REMAINING</div>
+
+      <div class="timer" id="clock">00:00</div>
+
+      <div id="timerStatus" class="small">Ready to begin</div>
+
+    </div>
+
+    <div class="timer-actions">
+
+      <button class="primary" id="start" onclick="startTimer()">Start</button>
+
+      <button class="secondary" id="pause" onclick="pauseTimer()">Pause</button>
+
+      <button class="danger" onclick="resetTimer()">Reset</button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- HISTORY -->
+
+<section class="page" id="history">
+
+  <div class="section"><h3>Activity History</h3></div>
+
+  <div id="historyList">
+
+    <div class="card empty">Your completed activities will appear here.</div>
+
+  </div>
+
+</section>
+
+</main>
+
+<nav class="nav">
+
+  <button class="active" onclick="showPage('home',this)"><span>⌂</span>Home</button>
+
+  <button onclick="showPage('add',this)"><span>＋</span>Add</button>
+
+  <button onclick="showPage('timerPage',this)"><span>◷</span>Timer</button>
+
+  <button onclick="showPage('history',this)"><span>▤</span>History</button>
+
+</nav>
+
+</div>
+
+<script>
+
+let activities = [];
+
+let selected = null;
+
+let remaining = 0;
+
+let endTime = 0;
+
+let interval = null;
+
+let running = false;
+
+let completedIds = new Set();
+
+function showPage(id,button){
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+
+  if(button) button.classList.add('active');
+
+  else {
+
+    let index = ['home','add','timerPage','history'].indexOf(id);
+
+    document.querySelectorAll('.nav button')[index].classList.add('active');
+
+  }
+
+}
+
+function addActivity(){
+
+  let name=document.getElementById('name').value.trim();
+
+  let hours=Number(document.getElementById('hours').value);
+
+  let minutes=Number(document.getElementById('minutes').value);
+
+  let seconds=(hours*3600)+(minutes*60);
+
+  if(!name){alert('Please enter an activity name.');return;}
+
+  if(seconds<=0){alert('Please select a valid duration.');return;}
+
+  activities.push({
+
+    id:Date.now(),
+
+    name,
+
+    description:document.getElementById('description').value,
+
+    category:document.getElementById('category').value,
+
+    duration:seconds,
+
+    remaining:seconds,
+
+    status:'Pending'
+
+  });
+
+  document.getElementById('name').value='';
+
+  document.getElementById('description').value='';
+
+  document.getElementById('hours').value='0';
+
+  document.getElementById('minutes').value='0';
+
+  render();
+
+  showPage('home');
+
+}
+
+function render(){
+
+  let list=document.getElementById('activityList');
+
+  let history=document.getElementById('historyList');
+
+  document.getElementById('total').textContent=activities.length;
+
+  document.getElementById('completed').textContent=activities.filter(a=>a.status==='Completed').length;
+
+  document.getElementById('ongoing').textContent=activities.filter(a=>a.status==='Ongoing').length;
+
+  if(!activities.length){
+
+    list.innerHTML='<div class="card empty">No activities yet. Add your first activity!</div>';
+
+  }else{
+
+    list.innerHTML=activities.map(a=>`
+
+      <div class="card">
+
+        <div class="activity">
+
+          <div class="activity-icon">📌</div>
+
+          <div class="activity-info">
+
+            <strong>${escapeHTML(a.name)}</strong>
+
+            <p>${escapeHTML(a.category)} · ${format(a.duration)}</p>
+
+          </div>
+
+          <span class="pill">${a.status}</span>
+
+        </div>
+
+        <button class="secondary" style="width:100%;margin-top:15px" onclick="selectActivity(${a.id})">Open Activity</button>
+
+      </div>`).join('');
+
+  }
+
+  let done=activities.filter(a=>a.status==='Completed');
+
+  history.innerHTML=done.length?done.map(a=>`
+
+    <div class="card">
+
+      <div class="activity">
+
+        <div class="activity-icon">✅</div>
+
+        <div class="activity-info">
+
+          <strong>${escapeHTML(a.name)}</strong>
+
+          <p>${escapeHTML(a.category)} · ${format(a.duration)}</p>
+
+        </div>
+
+        <span class="pill">Done</span>
+
+      </div>
+
+    </div>`).join(''):'<div class="card empty">Your completed activities will appear here.</div>';
+
+}
+
+function escapeHTML(s){
+
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+}
+
+function format(seconds){
+
+  let h=Math.floor(seconds/3600);
+
+  let m=Math.floor((seconds%3600)/60);
+
+  return h?`${h}h ${m}m`:`${m} minutes`;
+
+}
+
+function selectActivity(id){
+
+  if(running) pauseTimer();
+
+  selected=activities.find(a=>a.id===id);
+
+  remaining=selected.remaining;
+
+  document.getElementById('timerName').textContent=selected.name;
+
+  document.getElementById('timerStatus').textContent=selected.status;
+
+  updateClock();
+
+  showPage('timerPage');
+
+}
+
+function updateClock(){
+
+  let h=Math.floor(remaining/3600);
+
+  let m=Math.floor((remaining%3600)/60);
+
+  let s=remaining%60;
+
+  document.getElementById('clock').textContent=
+
+    h?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:
+
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+}
+
+function startTimer(){
+
+  if(!selected){alert('Please open an activity first.');return;}
+
+  if(running||remaining<=0)return;
+
+  running=true;
+
+  selected.status='Ongoing';
+
+  endTime=Date.now()+remaining*1000;
+
+  document.getElementById('timerStatus').textContent='Activity in progress';
+
+  document.getElementById('start').disabled=true;
+
+  document.getElementById('pause').disabled=false;
+
+  render();
+
+  interval=setInterval(()=>{
+
+    remaining=Math.max(0,Math.ceil((endTime-Date.now())/1000));
+
+    selected.remaining=remaining;
+
+    updateClock();
+
+    if(remaining<=0)finish();
+
+  },250);
+
+}
+
+function pauseTimer(){
+
+  if(!running)return;
+
+  clearInterval(interval);
+
+  remaining=Math.max(0,Math.ceil((endTime-Date.now())/1000));
+
+  selected.remaining=remaining;
+
+  running=false;
+
+  selected.status='Paused';
+
+  document.getElementById('timerStatus').textContent='Activity paused';
+
+  document.getElementById('start').disabled=false;
+
+  document.getElementById('pause').disabled=true;
+
+  updateClock();
+
+  render();
+
+}
+
+function resetTimer(){
+
+  if(!selected)return;
+
+  clearInterval(interval);
+
+  running=false;
+
+  remaining=selected.duration;
+
+  selected.remaining=remaining;
+
+  selected.status='Pending';
+
+  document.getElementById('timerStatus').textContent='Ready to begin';
+
+  document.getElementById('start').disabled=false;
+
+  document.getElementById('pause').disabled=false;
+
+  updateClock();
+
+  render();
+
+}
+
+function finish(){
+
+  clearInterval(interval);
+
+  running=false;
+
+  remaining=0;
+
+  selected.remaining=0;
+
+  selected.status='Completed';
+
+  updateClock();
+
+  document.getElementById('timerStatus').textContent='Activity completed! 🎉';
+
+  document.getElementById('start').disabled=true;
+
+  document.getElementById('pause').disabled=true;
+
+  render();
+
+  if('Notification' in window && Notification.permission==='granted'){
+
+    new Notification('ActivityMate: Time is up!',{
+
+      body:`Your ${selected.name} activity is complete.`
+
+    });
+
+  }else{
+
+    alert(`Time is up! Your ${selected.name} activity is complete! 🎉`);
+
+  }
+
+  try{
+
+    let audio=new (window.AudioContext||window.webkitAudioContext)();
+
+    let oscillator=audio.createOscillator();
+
+    oscillator.connect(audio.destination);
+
+    oscillator.frequency.value=800;
+
+    oscillator.start();
+
+    oscillator.stop(audio.currentTime+0.6);
+
+  }catch(e){}
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
